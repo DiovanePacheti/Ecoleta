@@ -4,7 +4,7 @@ module.exports = {
   
     client: 'sqlite3',
     connection: {
-      filename: path.resolve(__dirname, 'src','database','banco.sqlite3')
+      filename: path.resolve(__dirname, 'src','database','banco.sqlite')
     },
     migrations:{
       directory: path.resolve(__dirname, 'src','database','migrations')
