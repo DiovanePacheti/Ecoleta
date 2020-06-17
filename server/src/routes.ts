@@ -5,8 +5,7 @@ const routes = Router();
 
 const itemsController = new ItemsController();
 
-routes.post('/items', itemsController.create);
-routes.get('/items', itemsController.list);
+routes.get('/items', itemsController.index);
 
 export default routes;
 
