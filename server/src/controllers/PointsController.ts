@@ -56,4 +56,44 @@ export default class PointsController{
 		 })
 	}//fim do method create
 
+	async show(req: Request, res: Response){//filtra points por id
+		const {id} = req.params;
+
+		//busca na tabela points um ponto com o id recebido
+		const point = await connection('points').where('id', id).first();
+
+		if(!point){//se não houver ponto com o id recebiro retorna uma BadRequest
+			return res.status(400).json({message: 'Point not found'});
+		}
+
+		//conecta na tabela items 
+		const items = await connection('items')
+			.join('point_items', 'items.id', '=', 'point_items.item_id')
+			.where('point_items.point_id',id)
+			.select('items.title');
+
+		//retorna o point e items encontrados na tabela de relacionamento point_items  	
+		return res.json({point, items});	
+	}
+
+	//listando todos os pontos points
+
+	async index(req: Request, res: Response){
+		const {city, uf, items} = req.query;
+
+		const parsedItems = String(items)
+			.split(',')
+			.map(item => Number(item.trim()));
+
+		const points = await connection('points')
+			.join('point_items', 'points.id', '=', 'point_items.point_id')
+			.whereIn('point_items.item_id', parsedItems)
+			.where('city', String(city))
+			.where('uf', String(uf))
+			.distinct()
+			.select('points.*');
+			
+		return res.status(200).json(points)	
+	}
+
 }
